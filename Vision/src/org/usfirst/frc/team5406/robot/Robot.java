@@ -1,8 +1,5 @@
 package org.usfirst.frc.team5406.robot;
 
-
-import org.opencv.core.Rect;
-import org.opencv.imgproc.Imgproc;
 import org.usfirst.frc.team5406.vision.GripPipeline;
 import org.usfirst.frc.team5406.vision.MyThread;
 
@@ -13,30 +10,35 @@ import edu.wpi.cscore.AxisCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.vision.VisionRunner;
-import edu.wpi.first.wpilibj.vision.VisionThread;
 
 public class Robot extends IterativeRobot {
 	
 	//IP of the axis camera
-	final static String AXIS_IP = "169.254.47.133";
+	final static String AXIS_IP = "10.54.6.20";
+	/*IP can be found by using the Axis Camera Setup found
+	 * in C:\Program Files (x86)\National Instruments\LabVIEW 2016\project\Axis Camera Tool
+	 * It may take time to find the IP but give it a few minutes*/
 	
 	final static int TURRET_MOTOR = 9; //Not sure what actual ID is but i like the number 9
+	
+	//Camera Specs
+	final static double IMAGE_WIDTH = 320;
+	final static double IMAGE_HEIGHT = 240;
+	final static double IMAGE_CENTER = IMAGE_WIDTH / 2;
+	
 	
 	//Center of the contour
 	public static double centerX = 0.0;
 	
 	CANTalon turretMotor;
 	
-	//Filters Image
+	//Filters Image, You must GripPipeline.java into the new Robot code for it to work
 	GripPipeline gripPipeline;
 	//Camera being used
 	AxisCamera axisCamera;
 	//Runs Vision Scanning
 	MyThread thread;
 	
-	//Thread supplied by frc
-	//VisionThread frcThread;
 	
 	@Override
 	public void robotInit() {
@@ -49,6 +51,9 @@ public class Robot extends IterativeRobot {
 		turretMotor.changeControlMode(TalonControlMode.PercentVbus);
 		turretMotor.setVoltageRampRate(50);
 		
+		turretMotor.configPeakOutputVoltage(12, -12);
+		turretMotor.configNominalOutputVoltage(0, 0);
+		
 		//Instantiate items
 		gripPipeline = new GripPipeline();
 		axisCamera = CameraServer.getInstance().addAxisCamera(AXIS_IP);
@@ -57,21 +62,8 @@ public class Robot extends IterativeRobot {
 		//Starts and runs thread
 		thread.start();
 		
-		/* Code supplied by FRC website. I tried to make my own thread that mimics this thread to find the problem
-		 * frcThread =  new VisionThread(axisCamera, gripPipeline, new VisionRunner.Listener<GripPipeline>()
-				{
-
-					@Override
-					public void copyPipelineOutputs(GripPipeline pipeline) {
-						
-						if(!pipeline.findContoursOutput().isEmpty())
-						{
-							Rect r = Imgproc.boundingRect(pipeline.findContoursOutput().get(0));
-							centerX = r.x + (r.width / 2);
-						}
-					}
-				});
-        frcThread.start();*/
+		//Centering code is found in teleop
+		
 		
         System.out.println("INIT Done");
         
@@ -106,6 +98,24 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		//Displays center of contour on dashboard
 		SmartDashboard.putNumber("Contour", centerX);
+		
+		//Power of the Motor
+		double speed = 0;
+		
+		//How much error the camera can be at
+		double tolerance = 2;
+		
+		//Chooses the right power for the motor
+		if(centerX == 0)
+			speed = 0;
+		else if(centerX > IMAGE_CENTER + tolerance)
+			speed = 0.07 + 0.3 * ((centerX - IMAGE_CENTER) / IMAGE_CENTER);
+		else if(centerX < IMAGE_CENTER - tolerance)
+			speed = -0.07 - 0.3 * ((IMAGE_CENTER - centerX) / IMAGE_CENTER);
+		
+		//Powers motor
+		turretMotor.set(speed);
+		SmartDashboard.putNumber("Speed", speed);
 	}
 
 	/**

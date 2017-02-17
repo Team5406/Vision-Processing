@@ -1,2 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<qualifiedTypeNameHistroy/>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="edu.wpi.cscore.CvSource"/>
+<fullyQualifiedTypeName name="edu.wpi.first.wpilibj.CameraServer"/>
+<fullyQualifiedTypeName name="edu.wpi.first.wpilibj.smartdashboard.SmartDashboard"/>
+</qualifiedTypeNameHistroy>

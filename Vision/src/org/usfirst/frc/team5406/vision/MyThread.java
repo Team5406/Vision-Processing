@@ -8,6 +8,7 @@ import org.usfirst.frc.team5406.robot.Robot;
 import edu.wpi.cscore.AxisCamera;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class MyThread extends Thread {
 	
@@ -21,6 +22,20 @@ public class MyThread extends Thread {
     
 	//Converts Image into Mat
     CvSink cvSink;
+    
+    /*final double BOILER_HEIGHT = 160;
+    final double CAMERA_WIDTH = 320;
+    final double BOILER_DIAMETER = 15;
+    final double WIDTH_ANGLE = 0.5375614;
+    final double CAMERA_ANGLE = 0.698132; //Angle Camera is at
+    
+    double contourWidth = 0;
+    double imageWidth = 0;
+    double contourDistance = 0;
+    
+    
+    double distance = 0;*/
+    
     
 	/**
 	 * Test Thread Used to mimic Vision Thread
@@ -41,23 +56,45 @@ public class MyThread extends Thread {
 		
 		while(!interrupted())
 		{
-			System.out.println("Frame to source");
+			
 			//Puts frame into source
 			cvSink.grabFrame(source);
 			
-			System.out.println("Process");
 			//Filters source
 			gripPipeline.process(source);
 			
-			System.out.println("Sets Center");
 			//Sets centerX to value (Please apply a synchronized block somehwere here
-			if (!gripPipeline.findContoursOutput().isEmpty()) {
+			if(!gripPipeline.findContoursOutput().isEmpty()) {
 				//Creates a rectangle for the Contour
 	            Rect r = Imgproc.boundingRect(gripPipeline.findContoursOutput().get(0));
+	            //Finds the value of the center of the Tape
 	            Robot.centerX = (double) (r.x + (r.width / 2));
+	            
+	            SmartDashboard.putNumber("Width", r.width);
+	            SmartDashboard.putNumber("Tape Y", r.y);
+	            
+	            SmartDashboard.putBoolean("isTapeVisible", true);
+	            
+	            /*contourWidth = r.width;
+	            
+	            imageWidth = (BOILER_DIAMETER / contourWidth) * CAMERA_WIDTH;
+	            contourDistance = (imageWidth / 2) / (Math.tan(WIDTH_ANGLE));
+	            
+	            distance = Math.cos(CAMERA_ANGLE) * contourDistance;
+	            
+	            SmartDashboard.putNumber("Image Width", imageWidth);
+	            SmartDashboard.putNumber("ContourDistance", contourDistance);
+	            SmartDashboard.putNumber("Distance", distance);*/
 	        }
+			else
+			{
+				Robot.centerX = 0;
+				SmartDashboard.putBoolean("isTapeVisible", false);
+			}
+			//Puts Video Stream for contours
 			
-			System.out.println("Thread GO");
+			
+			
 		}
 	}
 

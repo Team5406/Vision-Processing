@@ -1,0 +1,84 @@
+package org.usfirst.frc.team5406.vision;
+
+import org.opencv.core.Mat;
+import org.opencv.core.Rect;
+import org.opencv.imgproc.Imgproc;
+import org.usfirst.frc.team5406.robot.Robot;
+
+import edu.wpi.cscore.AxisCamera;
+import edu.wpi.cscore.CvSink;
+import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+public class MyThread extends Thread {
+	
+	//Filters Image
+	GripPipeline gripPipeline;
+	//Axis Camera
+	AxisCamera axisCamera;
+	
+	//Used to filter
+	Mat source = new Mat();
+    
+	//Converts Image into Mat
+    CvSink cvSink;
+    
+    
+    double slope = 2.348571;
+    double contourY = 0;
+    double yIntercept = -170.577061;
+    
+    double distance = 0;
+	/**
+	 * Test Thread Used to mimic Vision Thread
+	 * @param gripPipeline
+	 * @param axisCamera
+	 */
+	public MyThread(GripPipeline gripPipeline, AxisCamera axisCamera)
+	{
+		this.gripPipeline = gripPipeline;
+		this.axisCamera = axisCamera;
+		cvSink = CameraServer.getInstance().getVideo(axisCamera);
+	}
+	
+	@Override
+	public void run()
+	{
+		System.out.println("Thread Running");
+		
+		while(!interrupted())
+		{
+			
+			//Puts frame into source
+			cvSink.grabFrame(source);
+			
+			//Filters source
+			gripPipeline.process(source);
+			
+			//Sets centerX to value (Please apply a synchronized block somehwere here
+			if(!gripPipeline.findContoursOutput().isEmpty()) {
+				//Creates a rectangle for the Contour
+	            Rect r = Imgproc.boundingRect(gripPipeline.findContoursOutput().get(0));
+	            Robot.centerX = (double) (r.x + (r.width / 2));
+	            
+	            SmartDashboard.putNumber("Width", r.width);
+	            SmartDashboard.putNumber("Height", r.height);
+	            SmartDashboard.putNumber("Tape Y", r.y);
+	            
+	            contourY = r.y;
+	            distance = (slope * contourY) + yIntercept;
+	            SmartDashboard.putNumber("Distance", distance);
+	        }
+			else
+			{
+				Robot.centerX = 0;
+				System.out.println("Empty");
+			}
+			//Puts Video Stream for contours
+			
+			
+			
+		}
+	}
+
+}
