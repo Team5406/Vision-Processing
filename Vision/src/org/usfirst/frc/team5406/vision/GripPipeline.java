@@ -1,10 +1,22 @@
 package org.usfirst.frc.team5406.vision;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.HashMap;
+
+import edu.wpi.first.wpilibj.vision.VisionPipeline;
 
 import org.opencv.core.*;
+import org.opencv.core.Core.*;
+import org.opencv.features2d.FeatureDetector;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.*;
+import org.opencv.objdetect.*;
 
 /**
 * GripPipeline class.
@@ -13,7 +25,7 @@ import org.opencv.imgproc.*;
 *
 * @author GRIP
 */
-public class GripPipeline {
+public class GripPipeline implements VisionPipeline {
 
 	//Outputs
 	private Mat hsvThresholdOutput = new Mat();
@@ -28,12 +40,12 @@ public class GripPipeline {
 	/**
 	 * This is the primary method that runs the entire pipeline and updates the outputs.
 	 */
-	public void process(Mat source0) {
+	@Override	public void process(Mat source0) {
 		// Step HSV_Threshold0:
 		Mat hsvThresholdInput = source0;
-		double[] hsvThresholdHue = {25.899280575539557, 110.88737201365188};
-		double[] hsvThresholdSaturation = {206.38489208633092, 255.0};
-		double[] hsvThresholdValue = {146.31359744569087, 255.0};
+		double[] hsvThresholdHue = {21.043165467625897, 120.1023890784983};
+		double[] hsvThresholdSaturation = {197.21223021582733, 255.0};
+		double[] hsvThresholdValue = {144.46942446043167, 255.0};
 		hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
 
 		// Step CV_erode0:
@@ -55,11 +67,11 @@ public class GripPipeline {
 		double filterContoursMinArea = 0.0;
 		double filterContoursMinPerimeter = 0.0;
 		double filterContoursMinWidth = 0.0;
-		double filterContoursMaxWidth = 50.0;
+		double filterContoursMaxWidth = 105.0;
 		double filterContoursMinHeight = 0.0;
-		double filterContoursMaxHeight = 10.0;
+		double filterContoursMaxHeight = 35.0;
 		double[] filterContoursSolidity = {0, 100};
-		double filterContoursMaxVertices = 20.0;
+		double filterContoursMaxVertices = 30.0;
 		double filterContoursMinVertices = 0.0;
 		double filterContoursMinRatio = 0.0;
 		double filterContoursMaxRatio = 1000.0;

@@ -3,4 +3,10 @@
 <fullyQualifiedTypeName name="edu.wpi.cscore.CvSource"/>
 <fullyQualifiedTypeName name="edu.wpi.first.wpilibj.CameraServer"/>
 <fullyQualifiedTypeName name="edu.wpi.first.wpilibj.smartdashboard.SmartDashboard"/>
+<fullyQualifiedTypeName name="edu.wpi.first.wpilibj.vision.VisionPipeline"/>
+<fullyQualifiedTypeName name="edu.wpi.first.wpilibj.vision.VisionThread"/>
+<fullyQualifiedTypeName name="edu.wpi.first.wpilibj.vision.VisionRunner.Listener"/>
+<fullyQualifiedTypeName name="org.usfirst.frc.team5406.vision.CeltXListener"/>
+<fullyQualifiedTypeName name="com.ctre.CANTalon"/>
+<fullyQualifiedTypeName name="com.ctre.CANTalon.TalonControlMode"/>
 </qualifiedTypeNameHistroy>

@@ -1,7 +1,7 @@
 package org.usfirst.frc.team5406.robot;
 
+import org.usfirst.frc.team5406.vision.CeltXListener;
 import org.usfirst.frc.team5406.vision.GripPipeline;
-import org.usfirst.frc.team5406.vision.MyThread;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
@@ -10,11 +10,12 @@ import edu.wpi.cscore.AxisCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.vision.VisionThread;
 
 public class Robot extends IterativeRobot {
 	
 	//IP of the axis camera
-	final static String AXIS_IP = "10.54.6.20";
+	final static String AXIS_IP = "10.54.6.17";
 	/*IP can be found by using the Axis Camera Setup found
 	 * in C:\Program Files (x86)\National Instruments\LabVIEW 2016\project\Axis Camera Tool
 	 * It may take time to find the IP but give it a few minutes*/
@@ -37,7 +38,7 @@ public class Robot extends IterativeRobot {
 	//Camera being used
 	AxisCamera axisCamera;
 	//Runs Vision Scanning
-	MyThread thread;
+	VisionThread thread;
 	
 	
 	@Override
@@ -57,7 +58,8 @@ public class Robot extends IterativeRobot {
 		//Instantiate items
 		gripPipeline = new GripPipeline();
 		axisCamera = CameraServer.getInstance().addAxisCamera(AXIS_IP);
-		thread = new MyThread(gripPipeline, axisCamera);
+		
+		thread = new <GripPipeline>VisionThread(axisCamera, gripPipeline, new CeltXListener());
 		
 		//Starts and runs thread
 		thread.start();
