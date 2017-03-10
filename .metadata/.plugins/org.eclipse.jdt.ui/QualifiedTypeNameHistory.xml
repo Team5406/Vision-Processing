@@ -9,4 +9,9 @@
 <fullyQualifiedTypeName name="org.usfirst.frc.team5406.vision.CeltXListener"/>
 <fullyQualifiedTypeName name="com.ctre.CANTalon"/>
 <fullyQualifiedTypeName name="com.ctre.CANTalon.TalonControlMode"/>
+<fullyQualifiedTypeName name="java.lang.Math"/>
+<fullyQualifiedTypeName name="org.opencv.core.MatOfPoint2f"/>
+<fullyQualifiedTypeName name="org.opencv.core.CvType"/>
+<fullyQualifiedTypeName name="org.opencv.core.Mat"/>
+<fullyQualifiedTypeName name="org.opencv.core.Point"/>
 </qualifiedTypeNameHistroy>

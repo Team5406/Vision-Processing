@@ -1,7 +1,7 @@
 package org.usfirst.frc.team5406.robot;
 
 import org.usfirst.frc.team5406.vision.CeltXListener;
-import org.usfirst.frc.team5406.vision.GripPipeline;
+import org.usfirst.frc.team5406.vision.GripPipelineM1013;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
@@ -34,7 +34,7 @@ public class Robot extends IterativeRobot {
 	CANTalon turretMotor;
 	
 	//Filters Image, You must GripPipeline.java into the new Robot code for it to work
-	GripPipeline gripPipeline;
+	GripPipelineM1013 gripPipeline;
 	//Camera being used
 	AxisCamera axisCamera;
 	//Runs Vision Scanning
@@ -56,10 +56,10 @@ public class Robot extends IterativeRobot {
 		turretMotor.configNominalOutputVoltage(0, 0);
 		
 		//Instantiate items
-		gripPipeline = new GripPipeline();
+		gripPipeline = new GripPipelineM1013();
 		axisCamera = CameraServer.getInstance().addAxisCamera(AXIS_IP);
 		
-		thread = new <GripPipeline>VisionThread(axisCamera, gripPipeline, new CeltXListener());
+		thread = new <GripPipelineM1013>VisionThread(axisCamera, gripPipeline, new CeltXListener());
 		
 		//Starts and runs thread
 		thread.start();
