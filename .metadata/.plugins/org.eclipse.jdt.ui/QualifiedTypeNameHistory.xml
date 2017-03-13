@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="edu.wpi.cscore.CvSource"/>
-<fullyQualifiedTypeName name="edu.wpi.first.wpilibj.CameraServer"/>
 <fullyQualifiedTypeName name="edu.wpi.first.wpilibj.smartdashboard.SmartDashboard"/>
 <fullyQualifiedTypeName name="edu.wpi.first.wpilibj.vision.VisionPipeline"/>
 <fullyQualifiedTypeName name="edu.wpi.first.wpilibj.vision.VisionThread"/>
@@ -14,4 +12,9 @@
 <fullyQualifiedTypeName name="org.opencv.core.CvType"/>
 <fullyQualifiedTypeName name="org.opencv.core.Mat"/>
 <fullyQualifiedTypeName name="org.opencv.core.Point"/>
+<fullyQualifiedTypeName name="edu.wpi.cscore.CvSink"/>
+<fullyQualifiedTypeName name="edu.wpi.cscore.CvSource"/>
+<fullyQualifiedTypeName name="edu.wpi.first.wpilibj.CameraServer"/>
+<fullyQualifiedTypeName name="org.opencv.core.Core"/>
+<fullyQualifiedTypeName name="org.opencv.core.Scalar"/>
 </qualifiedTypeNameHistroy>

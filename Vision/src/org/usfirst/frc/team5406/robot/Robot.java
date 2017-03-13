@@ -1,6 +1,7 @@
 package org.usfirst.frc.team5406.robot;
 
 import org.usfirst.frc.team5406.vision.CeltXListener;
+import org.usfirst.frc.team5406.vision.GripPipelineM1004;
 import org.usfirst.frc.team5406.vision.GripPipelineM1013;
 
 import com.ctre.CANTalon;
@@ -23,8 +24,8 @@ public class Robot extends IterativeRobot {
 	final static int TURRET_MOTOR = 9; //Not sure what actual ID is but i like the number 9
 	
 	//Camera Specs
-	final static double IMAGE_WIDTH = 320;
-	final static double IMAGE_HEIGHT = 240;
+	final static double IMAGE_WIDTH = 480;
+	final static double IMAGE_HEIGHT = 320;
 	final static double IMAGE_CENTER = IMAGE_WIDTH / 2;
 	
 	
@@ -34,15 +35,20 @@ public class Robot extends IterativeRobot {
 	CANTalon turretMotor;
 	
 	//Filters Image, You must GripPipeline.java into the new Robot code for it to work
-	GripPipelineM1013 gripPipeline;
+	//GripPipelineM1013 gripPipeline;
+	GripPipelineM1004 gripPipeline;
 	//Camera being used
 	AxisCamera axisCamera;
 	//Runs Vision Scanning
 	VisionThread thread;
 	
+	CeltXListener listener;
+	
 	
 	@Override
 	public void robotInit() {
+		
+		CameraServer.getInstance().removeServer("Contours");
 		
 		System.out.println("INIT");
 		
@@ -54,17 +60,20 @@ public class Robot extends IterativeRobot {
 		
 		turretMotor.configPeakOutputVoltage(12, -12);
 		turretMotor.configNominalOutputVoltage(0, 0);
-		
+	
 		//Instantiate items
-		gripPipeline = new GripPipelineM1013();
+		gripPipeline = new GripPipelineM1004();
+		listener = new CeltXListener();
 		axisCamera = CameraServer.getInstance().addAxisCamera(AXIS_IP);
 		
-		thread = new <GripPipelineM1013>VisionThread(axisCamera, gripPipeline, new CeltXListener());
+		thread = new <GripPipelineM1004>VisionThread(axisCamera, gripPipeline, listener);
 		
 		//Starts and runs thread
 		thread.start();
 		
 		//Centering code is found in teleop
+		SmartDashboard.putNumber("# Countour", 0);
+		
 		
 		
         System.out.println("INIT Done");

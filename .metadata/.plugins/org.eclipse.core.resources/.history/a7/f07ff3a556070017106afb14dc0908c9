@@ -1,0 +1,120 @@
+package org.usfirst.frc.team5406.vision;
+
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.RotatedRect;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
+import org.usfirst.frc.team5406.robot.Robot;
+
+import edu.wpi.cscore.CvSource;
+import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.vision.VisionRunner.Listener;
+
+
+public class CeltXListener implements Listener<GripPipelineM1004>{
+
+	CvSource output;
+	
+	public CeltXListener()
+	{
+		super();
+		
+		output = CameraServer.getInstance().putVideo("Contours", 480, 320);
+		
+	}
+	
+	@Override
+	public void copyPipelineOutputs(GripPipelineM1004 pipeline) {
+		
+		Mat contourFrame = pipeline.hsvThresholdOutput();
+		
+		if(!pipeline.findContoursOutput().isEmpty()) {
+			//Creates a rectangle for the Contour
+            Rect r = Imgproc.boundingRect(pipeline.findContoursOutput().get(0));
+ 
+            MatOfPoint2f contour = new MatOfPoint2f();
+            
+            pipeline.findContoursOutput().get(0).convertTo(contour, CvType.CV_32F);
+            
+            RotatedRect rRect = Imgproc.minAreaRect(contour);
+            
+            Point rectVertices[] = new Point[4];
+            
+            rRect.points(rectVertices);
+            
+            //Finds the value of the center of the Tape
+            Robot.centerX = (double) (r.x + (r.width / 2));
+            
+            SmartDashboard.putString("Dimensions", pipeline.hsvThresholdOutput().size().height + ", " + pipeline.hsvThresholdOutput().size().width);
+            
+            SmartDashboard.putNumber("VLength", Math.sqrt(Math.pow(r.width, 2) + Math.pow(r.height, 2)));
+            SmartDashboard.putNumber("VWidth", r.width);
+            SmartDashboard.putNumber("VHeight", r.height);
+            SmartDashboard.putNumber("VTape Y", r.y);
+            
+            SmartDashboard.putNumber("RWidth", rRect.size.width);
+            SmartDashboard.putNumber("RHeight", rRect.size.height);
+            SmartDashboard.putNumber("RAngle", rRect.angle);
+            
+            for(int i = 0; i < 4; i++)
+            	SmartDashboard.putString("Vertex " + i, rectVertices[i].x + ", " + rectVertices[i].y);
+            
+            SmartDashboard.putBoolean("isTapeVisible", true);
+            
+            
+            /*
+             * Camera filters
+             * 
+             * Color Level: 100
+             * Brightness: 50
+             * Sharpness: 50
+             * Contrast: 100
+             * 
+             * White Balance: Fixed Indoor
+             * 
+             * Exposure: 4
+             * 
+             * Backlight: false
+             */
+            int desiredContour = (int) SmartDashboard.getNumber("# Countour", 0);
+            
+            if(desiredContour > pipeline.findContoursOutput().size() - 1)
+            	desiredContour = pipeline.findContoursOutput().size() - 1;
+            
+            	Rect rectangle = Imgproc.boundingRect(pipeline.findContoursOutput().get(desiredContour));
+            	Imgproc.rectangle(contourFrame, rectangle.tl(), rectangle.br(), new Scalar(255, 0, 0), 1, 8, 0);
+            SmartDashboard.putNumber("Contour #", pipeline.findContoursOutput().size());
+            
+            //for(int i = 0; i < 4; i++)
+            	//Imgproc.line(contourFrame, rectVertices[i], rectVertices[(i + 1) % 4], new Scalar(0, 255, 0), 1, 8, 0);
+            
+            /*contourWidth = r.width;
+            
+            imageWidth = (BOILER_DIAMETER / contourWidth) * CAMERA_WIDTH;
+            contourDistance = (imageWidth / 2) / (Math.tan(WIDTH_ANGLE));
+            
+            distance = Math.cos(CAMERA_ANGLE) * contourDistance;
+            
+            SmartDashboard.putNumber("Image Width", imageWidth);
+            SmartDashboard.putNumber("ContourDistance", contourDistance);
+            SmartDashboard.putNumber("Distance", distance);*/
+        }
+		else
+		{
+			Robot.centerX = 0;
+			SmartDashboard.putBoolean("isTapeVisible", false);
+		}
+		
+		output.putFrame(contourFrame);
+		
+	}
+	
+
+
+}
